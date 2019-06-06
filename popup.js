@@ -8,6 +8,7 @@ const input = document.getElementById("input");
 const button = document.getElementById("search");
 const result = document.getElementById("result");
 const giphyApi = "WYW5xOsu511SGfqFoA9wC9E2OReIIxJx";
+const limit = 20;
 
 input.focus();
 
@@ -25,7 +26,8 @@ button.addEventListener("click", function() {
         inputValue +
         "&api_key=" +
         giphyApi +
-        "&limit=8"
+        "&limit=" +
+        limit
     )
       .then(response => response.json())
       .then(body => {
@@ -40,8 +42,12 @@ button.addEventListener("click", function() {
           const div = document.createElement("div");
           const video = document.createElement("video");
 
+          div.setAttribute("class", "grid-item");
+          div.style.height = item.images.fixed_width_small_still.height + "px";
+          div.style.width = item.images.fixed_width_small_still.width + "px";
+
           video.setAttribute("id", item.id);
-          video.setAttribute("src", item.images.fixed_height_small.mp4);
+          video.setAttribute("src", item.images.downsized_small.mp4);
           video.setAttribute("autoplay", "");
           video.setAttribute("loop", "");
           video.setAttribute("class", "btn");
@@ -51,7 +57,16 @@ button.addEventListener("click", function() {
           result.appendChild(div);
         });
 
-        new ClipboardJS(".btn");
+        const btnClipboard = new ClipboardJS(".btn");
+        const iso = new Isotope(result, {
+          itemSelector: ".grid-item",
+          masonry: {
+            columnWidth: 100,
+            gutter: 5
+          }
+        });
+        iso.appended(result);
+        iso.layout();
       });
   }, 1000);
 });
